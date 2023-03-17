@@ -1,0 +1,131 @@
+package hibernate_proj;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+import javax.persistence.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class myhibernate {
+	
+		SessionFactory sc1 = new Configuration().configure().buildSessionFactory();
+				
+		Session session = sc1.openSession();
+		
+		Transaction t1 = session.beginTransaction();
+
+		public void insert(int rl, String n1) {
+			student_table st1 = new student_table();
+			st1.setRollno(rl);
+			st1.setName(n1);
+			Session s=sc1.openSession();
+			Transaction t1= s.beginTransaction();
+			s.save(st1);
+			t1.commit();
+			 //Commit will make the database commit. 
+			//The changes to persistent object will be written to database
+						 			
+		}
+
+		public void delete(int n2) {
+	    	student_table st1 = new student_table();
+	    	
+	        st1.setRollno(n2);
+	        
+	        Session s=sc1.openSession();
+			Transaction t1= s.beginTransaction();
+			s.delete(st1);
+			t1.commit();
+
+//	        Query query=session.createQuery("delete from student_table where Rollno=111");  
+//	         query.executeUpdate();  
+		}
+		
+		public void update(int rr, String nn) {
+			
+	    	student_table st1 = new student_table();
+	    	
+	     	   st1.setRollno(rr);
+	            st1.setName(nn);
+	    //session.persist(st1); // Hibernate persist is similar to save (with transaction) 
+	    //and it adds the entity object to the persistent context, 
+	    //so any further changes are tracked. 
+	            Session s=sc1.openSession();
+				Transaction t1= s.beginTransaction();
+				s.saveOrUpdate(st1);
+				t1.commit();
+	                       
+	          //  session.update(st1); //if data exists in database
+	          //   session.save(st1);//if data not exists
+	                             
+   		            } 
+		 	   
+	            		
+		public  void display() {
+			Session s=sc1.openSession();
+			Transaction t1= s.beginTransaction();
+			Query q = s.createQuery("from student_table");
+			List l = q.getResultList();
+  //Execute a SELECT query and return the query results as an untyped List.
+			Iterator it = l.iterator();
+			System.out.println("List of students:");
+			while (it.hasNext()) {
+				student_table stud = (student_table) it.next();
+				System.out.println(stud.toString());
+				//System.out.println(it.next().toString());
+			}
+			t1.commit();
+		}
+
+		public static void main(String[] args)
+		{
+			myhibernate sm1 = new myhibernate();
+			Scanner sc11 = new Scanner(System.in); 
+
+			lp: while (true) 
+			{
+				System.out.println("1: Insert");
+				System.out.println("2: Display");
+				System.out.println("3: delete");
+				System.out.println("4: update");
+				System.out.println("5: exit");
+				System.out.print("Make your choice: ");
+				int ch = sc11.nextInt(); // reading user's choice
+				switch (ch) {
+				case 1: 
+					System.out.print("Enter the student Details to insert \n");
+					System.out.print("Enter the roll no \n");
+					int rl = sc11.nextInt();
+					System.out.print("Enter the student name \n");
+					String n1 = sc11.next();
+					sm1.insert(rl,n1);
+					break;			
+				case 2:
+					sm1.display();
+					break;
+				case 3:
+					System.out.print("Enter the roll no \n");
+					int n2 = sc11.nextInt();
+					sm1.delete(n2);
+					break;
+				case 4:
+					System.out.print("Enter the roll no \n");
+					int rr = sc11.nextInt();
+					System.out.print("Enter the student name \n");
+					String nn = sc11.next();
+					sm1.update(rr,nn);
+					break;
+				case 5:
+					break lp;
+		
+		        default:
+					System.out.println("Invalid choice! Please make a valid choice. \n\n");
+				}
+			}
+		}
+}
+
